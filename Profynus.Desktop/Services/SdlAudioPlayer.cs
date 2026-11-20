@@ -24,6 +24,7 @@ public sealed class SdlAudioPlayer : IAudioPlayer
     }
     private static string DeviceError() => "Could not open the system's default audio output. " + Error()
         + " Available audio backends: " + string.Join(", ", GetAvailableDrivers()) + ".";
+
     private void Open()
     {
         if (opened) return;
@@ -31,7 +32,10 @@ public sealed class SdlAudioPlayer : IAudioPlayer
         {
             Native.EnsureLoaded();
             if (Native.SDL_InitSubSystem(0x10) < 0) throw new InvalidOperationException(DeviceError());
-            if (Native.Mix_OpenAudio(44100, BitConverter.IsLittleEndian ? (ushort)0x8010 : (ushort)0x9010, 2, 1024) < 0)
+
+            if (
+                Native.Mix_OpenAudio(44100, BitConverter.IsLittleEndian ? (ushort)0x8010 : (ushort)0x9010,
+                    2, 4096) < 0) // Expand chunk size from 1024 to 4096 for 93ms of latency support
             {
                 var error = DeviceError(); // SDL teardown can overwrite the original device failure.
                 Native.SDL_QuitSubSystem(0x10);
@@ -74,6 +78,11 @@ public sealed class SdlAudioPlayer : IAudioPlayer
         music = IntPtr.Zero;
         Native.Mix_CloseAudio(); Native.SDL_QuitSubSystem(0x10); opened = false;
     }
+
+
+    /// <summary>
+    ///  Native class for Audio processing loading embedded libraries
+    /// </summary>
     private static class Native
     {
         static Native() => NativeLibrary.SetDllImportResolver(typeof(Native).Assembly, Resolve);
@@ -83,13 +92,20 @@ public sealed class SdlAudioPlayer : IAudioPlayer
             if (name is not ("SDL2" or "SDL2_mixer")) return IntPtr.Zero;
             return NativeLibrary.Load(AudioRuntime.LibraryPath(name));
         }
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)] public delegate void MixCallback(IntPtr user, IntPtr stream, int length);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate void MixCallback(IntPtr user, IntPtr stream, int length);
+
+        // Resampler
+
         [DllImport("SDL2", CallingConvention = CallingConvention.Cdecl)] public static extern int SDL_GetNumAudioDrivers();
         [DllImport("SDL2", CallingConvention = CallingConvention.Cdecl)] public static extern IntPtr SDL_GetAudioDriver(int index);
         [DllImport("SDL2", CallingConvention = CallingConvention.Cdecl)] public static extern int SDL_InitSubSystem(uint flags);
         [DllImport("SDL2", CallingConvention = CallingConvention.Cdecl)] public static extern void SDL_QuitSubSystem(uint flags);
         [DllImport("SDL2", CallingConvention = CallingConvention.Cdecl)] public static extern IntPtr SDL_GetError();
-        [DllImport("SDL2_mixer", CallingConvention = CallingConvention.Cdecl)] public static extern int Mix_OpenAudio(int frequency, ushort format, int channels, int chunkSize);
+
+        [DllImport("SDL2_mixer", CallingConvention = CallingConvention.Cdecl)]
+        public static extern int Mix_OpenAudio(int frequency, ushort format, int channels, int chunkSize);
         [DllImport("SDL2_mixer", CallingConvention = CallingConvention.Cdecl)] public static extern void Mix_CloseAudio();
         [DllImport("SDL2_mixer", CallingConvention = CallingConvention.Cdecl)] public static extern void Mix_SetPostMix(MixCallback? callback, IntPtr user);
         [DllImport("SDL2_mixer", CallingConvention = CallingConvention.Cdecl)] public static extern IntPtr Mix_LoadMUS([MarshalAs(UnmanagedType.LPUTF8Str)] string path);
