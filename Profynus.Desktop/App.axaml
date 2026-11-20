@@ -1,0 +1,17 @@
+<Application xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Class="Profynus.Desktop.App" RequestedThemeVariant="Dark">
+  <Application.Resources>
+    <SolidColorBrush x:Key="Accent">#20D7ED</SolidColorBrush>
+    <SolidColorBrush x:Key="Canvas">#080F18</SolidColorBrush>
+  </Application.Resources>
+  <Application.Styles>
+    <FluentTheme />
+    <Style Selector="Window"><Setter Property="FontFamily" Value="Inter"/><Setter Property="Foreground" Value="#EDF4FA"/></Style>
+    <Style Selector="TextBlock.muted"><Setter Property="Foreground" Value="#8A9BAD"/></Style>
+    <Style Selector="TextBlock.eyebrow"><Setter Property="Foreground" Value="{DynamicResource Accent}"/><Setter Property="FontSize" Value="11"/><Setter Property="LetterSpacing" Value="3"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
+    <Style Selector="Button"><Setter Property="CornerRadius" Value="12"/><Setter Property="Padding" Value="16,11"/><Setter Property="Background" Value="#15212F"/><Setter Property="Cursor" Value="Hand"/></Style>
+    <Style Selector="Button.primary"><Setter Property="Background" Value="{DynamicResource Accent}"/><Setter Property="Foreground" Value="#061218"/><Setter Property="FontWeight" Value="SemiBold"/></Style>
+    <Style Selector="Border.panel"><Setter Property="Background" Value="#0D1621"/><Setter Property="BorderBrush" Value="#203040"/><Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="22"/></Style>
+    <Style Selector="TextBox"><Setter Property="CornerRadius" Value="12"/></Style>
+    <Style Selector="ComboBox"><Setter Property="CornerRadius" Value="10"/></Style>
+  </Application.Styles>
+</Application>

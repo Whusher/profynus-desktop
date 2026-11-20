@@ -1,0 +1,28 @@
+<Project>
+  <PropertyGroup>
+    <AudioRuntimeIdentifier Condition="'$(RuntimeIdentifier)' != ''">$(RuntimeIdentifier)</AudioRuntimeIdentifier>
+    <AudioRuntimeIdentifier Condition="'$(AudioRuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</AudioRuntimeIdentifier>
+    <AudioBundlePath>$(MSBuildThisFileDirectory)artifacts/audio/$(AudioRuntimeIdentifier)</AudioBundlePath>
+  </PropertyGroup>
+  <ItemGroup Condition="Exists('$(AudioBundlePath)/runtime.json')">
+    <Content Include="$(AudioBundlePath)/**/*" Link="audio/%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+  <Target Name="RequireAudioBundleForPublish" BeforeTargets="PrepareForPublish" Condition="'$(IsTestProject)' != 'true'">
+    <Error Condition="!Exists('$(AudioBundlePath)/runtime.json')"
+           Text="Audio bundle missing for $(AudioRuntimeIdentifier). Run python3 build/native/build.py --rid $(AudioRuntimeIdentifier) before publishing. Publishing without audio dependencies is not supported." />
+    <PropertyGroup>
+      <AudioExecutable Condition="$([System.String]::Copy('$(AudioRuntimeIdentifier)').StartsWith('win-'))">ffmpeg.exe</AudioExecutable>
+      <AudioExecutable Condition="'$(AudioExecutable)' == ''">ffmpeg</AudioExecutable>
+      <AudioSdl Condition="$([System.String]::Copy('$(AudioRuntimeIdentifier)').StartsWith('win-'))">SDL2.dll</AudioSdl>
+      <AudioMixer Condition="$([System.String]::Copy('$(AudioRuntimeIdentifier)').StartsWith('win-'))">SDL2_mixer.dll</AudioMixer>
+      <AudioSdl Condition="$([System.String]::Copy('$(AudioRuntimeIdentifier)').StartsWith('osx-'))">libSDL2.dylib</AudioSdl>
+      <AudioMixer Condition="$([System.String]::Copy('$(AudioRuntimeIdentifier)').StartsWith('osx-'))">libSDL2_mixer.dylib</AudioMixer>
+      <AudioSdl Condition="'$(AudioSdl)' == ''">libSDL2-2.0.so.0</AudioSdl>
+      <AudioMixer Condition="'$(AudioMixer)' == ''">libSDL2_mixer-2.0.so.0</AudioMixer>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(AudioBundlePath)/$(AudioExecutable)') Or !Exists('$(AudioBundlePath)/$(AudioSdl)') Or !Exists('$(AudioBundlePath)/$(AudioMixer)')"
+           Text="The audio bundle is incomplete. Rebuild it before publishing." />
+    <Error Condition="'$(SelfContained)' != 'true'" Text="Release packages must be self-contained: publish with --self-contained true." />
+  </Target>
+</Project>

@@ -1,0 +1,30 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:vm="using:Profynus.Desktop.ViewModels" xmlns:controls="using:Profynus.Desktop.Controls"
+ x:Class="Profynus.Desktop.MiniPlayerWindow" x:DataType="vm:PlayerViewModel"
+ Title="Profynus · Mini player" Width="360" Height="440" CanResize="False"
+ WindowDecorations="None" TransparencyLevelHint="Transparent" Background="Transparent"
+ Topmost="True" ShowInTaskbar="True" WindowStartupLocation="CenterScreen">
+ <Grid x:Name="Surface" Background="Transparent" RowDefinitions="36,*,Auto,100" Margin="12">
+  <Border x:Name="WindowActions" CornerRadius="16" Background="#D90D1621" Padding="8,0">
+   <Grid ColumnDefinitions="*,Auto,Auto">
+    <TextBlock Text="⠿  PROFYNUS" Classes="eyebrow" VerticalAlignment="Center" PointerPressed="DragWindow" ToolTip.Tip="Drag to move"/>
+    <Button Grid.Column="1" Content="↗" Click="Restore" Padding="10,4" Background="Transparent" ToolTip.Tip="Open full player" AutomationProperties.Name="Open full player"/>
+    <Button Grid.Column="2" Content="×" Click="Dismiss" Padding="10,4" Background="Transparent" ToolTip.Tip="Close mini player" AutomationProperties.Name="Close mini player"/>
+   </Grid>
+  </Border>
+  <controls:AudioOrb x:Name="Orb" Grid.Row="1" PointerPressed="DragWindow"/>
+  <Border Grid.Row="2" Background="#B0080F18" CornerRadius="12" Padding="14,8" PointerPressed="DragWindow">
+   <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" TextAlignment="Center" FontWeight="SemiBold" ToolTip.Tip="{Binding Title}"/>
+  </Border>
+  <Border x:Name="PlaybackControls" Grid.Row="3" CornerRadius="18" Background="#E60D1621" Padding="12" Margin="0,8,0,0">
+   <StackPanel Spacing="4">
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="12">
+     <Button Content="|◀" Click="Previous" Padding="12,6" AutomationProperties.Name="Previous track"/>
+     <Button Content="{Binding PlayLabel}" Click="TogglePlay" Classes="primary" Padding="18,6" AutomationProperties.Name="Play or pause"/>
+     <Button Content="▶|" Click="Next" Padding="12,6" AutomationProperties.Name="Next track"/>
+    </StackPanel>
+    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8"><TextBlock Text="VOL" Classes="muted" FontSize="9" VerticalAlignment="Center"/><Slider Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding Volume}" AutomationProperties.Name="Volume"/><TextBlock Grid.Column="2" Text="{Binding Time}" Classes="muted" FontSize="9" VerticalAlignment="Center"/></Grid>
+   </StackPanel>
+  </Border>
+ </Grid>
+</Window>

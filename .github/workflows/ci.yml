@@ -1,0 +1,88 @@
+name: Build, test and package
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  unit-tests:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet test Profynus.sln --configuration Release --filter 'Category!=NativeAudio'
+  packages:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-22.04, rid: linux-x64 }
+          - { os: ubuntu-24.04-arm, rid: linux-arm64 }
+          - { os: windows-2022, rid: win-x64 }
+          - { os: macos-15-intel, rid: osx-x64 }
+          - { os: macos-15, rid: osx-arm64 }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Linux build tools (not end-user dependencies)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y build-essential pkg-config libasound2-dev libpulse-dev patchelf
+      - name: macOS build tools
+        if: runner.os == 'macOS'
+        run: brew install pkg-config
+      - uses: msys2/setup-msys2@v2
+        if: runner.os == 'Windows'
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            make
+            python
+            diffutils
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-pkgconf
+      - uses: actions/cache@v4
+        with:
+          path: artifacts/native/downloads
+          key: audio-sources-${{ hashFiles('build/native/sources.json') }}
+      - name: Build private audio runtime
+        if: runner.os != 'Windows'
+        run: python3 build/native/build.py --rid ${{ matrix.rid }}
+      - name: Build private Windows audio runtime
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: python build/native/build.py --rid ${{ matrix.rid }}
+      - name: Verify runtime
+        if: runner.os != 'Windows'
+        run: python3 build/native/verify.py artifacts/audio/${{ matrix.rid }}
+      - name: Verify Windows runtime
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: python build/native/verify.py artifacts/audio/${{ matrix.rid }}
+      - name: Test using only bundled audio
+        env:
+          SDL_AUDIODRIVER: dummy
+        run: dotnet test Profynus.sln --configuration Release
+      - name: Package self-contained release
+        if: runner.os != 'Windows'
+        run: python3 build/publish.py --rid ${{ matrix.rid }}
+      - name: Package self-contained Windows release
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $env:PATH = "C:\msys64\mingw64\bin;" + $env:PATH
+          python build/publish.py --rid ${{ matrix.rid }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Profynus-${{ matrix.rid }}
+          path: artifacts/releases/*
+          if-no-files-found: error

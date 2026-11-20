@@ -1,0 +1,48 @@
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:vm="using:Profynus.Desktop.ViewModels" xmlns:models="using:Profynus.Desktop.Models" x:DataType="vm:PlayerViewModel" xmlns:controls="using:Profynus.Desktop.Controls" x:Class="Profynus.Desktop.MainWindow" Title="Profynus · Your music, amplified" Width="1440" Height="920" MinWidth="1000" MinHeight="720" Background="{DynamicResource Canvas}">
+ <Grid RowDefinitions="84,*,120" Margin="28,0">
+  <Grid ColumnDefinitions="Auto,*,Auto">
+   <StackPanel Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+    <Image Source="/Assets/profynus.png" Width="48" Height="48"/>
+    <StackPanel VerticalAlignment="Center" Spacing="4"><TextBlock Text="P R O F Y N U S" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource Accent}"/><TextBlock Text="DESKTOP / MUSIC WITHOUT LIMITS" FontSize="9" LetterSpacing="2" Classes="muted"/></StackPanel>
+   </StackPanel>
+   <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="20" VerticalAlignment="Center"><Button Content="◉  Mini player" Click="OpenMiniPlayer"/><TextBlock Text="●  LOCAL FIRST" Classes="eyebrow" VerticalAlignment="Center"/></StackPanel>
+  </Grid>
+  <Grid Grid.Row="1" ColumnDefinitions="*,360" ColumnSpacing="22">
+   <Grid RowDefinitions="Auto,*,Auto" RowSpacing="16">
+    <Grid ColumnDefinitions="*,Auto" Margin="4,8,4,0"><StackPanel Spacing="7"><TextBlock Text="Your listening space" FontSize="28" FontWeight="SemiBold"/><TextBlock Text="Sound you love. A world that moves with it." Classes="muted"/></StackPanel><Button Grid.Column="1" Content="＋  Add folder" Click="AddFolder" VerticalAlignment="Center" Classes="primary"/></Grid>
+    <Border Grid.Row="1" Classes="panel" ClipToBounds="True">
+     <Grid RowDefinitions="Auto,*,Auto" Margin="26">
+      <Grid ColumnDefinitions="*,Auto"><TextBlock Text="S O N I C   A T M O S P H E R E" Classes="eyebrow"/><TextBlock Grid.Column="1" Text="LIVE AUDIO / 3D" Classes="muted" FontSize="10"/></Grid>
+      <controls:AudioOrb x:Name="Orb" Grid.Row="1" MinHeight="220"/>
+      <StackPanel Grid.Row="2" Spacing="7"><TextBlock Text="{Binding Title}" FontSize="26" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/><TextBlock Text="{Binding Artist}" Classes="muted"/><TextBlock Text="{Binding Status}" Foreground="{DynamicResource Accent}" FontSize="11" TextWrapping="Wrap" Margin="0,9,0,0"/></StackPanel>
+     </Grid>
+    </Border>
+    <Border Grid.Row="2" Classes="panel" Padding="20,16">
+     <Grid ColumnDefinitions="*,*" ColumnSpacing="24">
+      <StackPanel Spacing="10"><TextBlock Text="SHAPE PROFILE" Classes="eyebrow"/><ComboBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding Profile}" HorizontalAlignment="Stretch"/><CheckBox Content="Reduced motion" IsChecked="{Binding ReducedMotion}" FontSize="12"/></StackPanel>
+      <StackPanel Grid.Column="1" Spacing="10"><TextBlock Text="COLOR YOUR WORLD" Classes="eyebrow"/><ComboBox ItemsSource="{Binding Themes}" SelectedItem="{Binding Theme}" HorizontalAlignment="Stretch"><ComboBox.ItemTemplate><DataTemplate x:DataType="models:ThemePalette"><StackPanel Orientation="Horizontal" Spacing="10"><Border Width="16" Height="16" CornerRadius="8" Background="{Binding Swatch}"/><TextBlock Text="{Binding Name}"/></StackPanel></DataTemplate></ComboBox.ItemTemplate></ComboBox><TextBlock Text="24 curated palettes · saved automatically" Classes="muted" FontSize="11" Margin="0,8,0,0"/></StackPanel>
+     </Grid>
+    </Border>
+   </Grid>
+   <Border Grid.Column="1" Classes="panel" Padding="20" Margin="0,8,0,0">
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="16">
+     <Grid ColumnDefinitions="*,Auto"><TextBlock Text="Your collection" FontSize="21" FontWeight="SemiBold"/><Button Grid.Column="1" Content="↻" Click="Rescan" ToolTip.Tip="Rescan music folders" AutomationProperties.Name="Rescan music folders"/></Grid>
+     <TextBlock Grid.Row="1" Text="{Binding LibraryCount}" Classes="muted" FontSize="12"/>
+     <TextBox Grid.Row="2" PlaceholderText="Search songs, artists, formats…" Text="{Binding Search}"/>
+     <Grid Grid.Row="3">
+      <ListBox x:Name="Library" ItemsSource="{Binding Tracks}" Background="Transparent" BorderThickness="0" DoubleTapped="PlaySelected" KeyDown="LibraryKeyDown">
+       <ListBox.ItemTemplate><DataTemplate x:DataType="models:Track"><Grid ColumnDefinitions="42,*,Auto" Margin="0,7" ColumnSpacing="10"><Border Width="38" Height="42" CornerRadius="10" Background="#192B37"><TextBlock Text="♫" Foreground="{DynamicResource Accent}" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><StackPanel Grid.Column="1" Spacing="5" VerticalAlignment="Center"><TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" FontWeight="Medium"/><TextBlock Text="{Binding Artist}" Classes="muted" FontSize="11" TextTrimming="CharacterEllipsis"/></StackPanel><TextBlock Grid.Column="2" Text="{Binding Format}" FontSize="9" Classes="muted" VerticalAlignment="Center"/></Grid></DataTemplate></ListBox.ItemTemplate>
+      </ListBox>
+      <StackPanel IsVisible="{Binding IsEmpty}" VerticalAlignment="Center" Spacing="16" Margin="16"><TextBlock Text="A home for your music." FontSize="20" TextAlignment="Center"/><TextBlock Text="Add a folder or search your Music directory. Your next listening session starts here." TextWrapping="Wrap" TextAlignment="Center" Classes="muted"/><Button Content="Discover music" Click="Rescan" HorizontalAlignment="Center"/></StackPanel>
+     </Grid>
+     <StackPanel Grid.Row="4" Spacing="8"><TextBlock Text="MP3 · FLAC · WAV · OGG · OPUS · AIFF" Classes="eyebrow" FontSize="9" LetterSpacing="1"/><TextBlock Text="Double-click a track to play · queue follows your selection" TextWrapping="Wrap" FontSize="10" Classes="muted"/></StackPanel>
+    </Grid>
+   </Border>
+  </Grid>
+  <Grid Grid.Row="2" ColumnDefinitions="240,*,190" ColumnSpacing="28" VerticalAlignment="Center">
+   <StackPanel Spacing="6"><TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/><TextBlock Text="{Binding Artist}" Classes="muted" FontSize="11" TextTrimming="CharacterEllipsis"/></StackPanel>
+   <StackPanel Grid.Column="1" Spacing="4"><StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="12"><Button Content="|◀" Click="Previous" AutomationProperties.Name="Previous track"/><Button Content="{Binding PlayLabel}" Click="TogglePlay" Classes="primary" Width="64" HorizontalContentAlignment="Center" AutomationProperties.Name="Play or pause"/><Button Content="▶|" Click="Next" AutomationProperties.Name="Next track"/></StackPanel><Grid ColumnDefinitions="*,Auto" ColumnSpacing="12"><Slider x:Name="SeekBar" Minimum="0" Maximum="{Binding Duration}" Value="{Binding Position, Mode=OneWay}" AutomationProperties.Name="Playback position"/><TextBlock Grid.Column="1" Text="{Binding Time}" FontSize="10" Classes="muted" VerticalAlignment="Center"/></Grid></StackPanel>
+   <StackPanel Grid.Column="2" Spacing="8"><TextBlock Text="VOLUME" Classes="eyebrow" FontSize="9"/><Slider Minimum="0" Maximum="100" Value="{Binding Volume}" AutomationProperties.Name="Volume"/></StackPanel>
+  </Grid>
+ </Grid>
+</Window>

@@ -1,0 +1,55 @@
+# .NET build, test, coverage and publish output
+**/bin/
+**/obj/
+artifacts/
+TestResults/
+coverage/
+*.trx
+*.coverage
+*.coveragexml
+
+# IDE and operating-system state
+.idea/
+.vs/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
+.DS_Store
+Thumbs.db
+
+# Local agents, credentials and configuration
+.agents/
+.codex/
+.aws/
+.env
+.env.*
+!.env.example
+**/secrets.json
+**/appsettings.Local.json
+**/appsettings.*.local.json
+*.pfx
+*.p12
+*.pem
+*.key
+
+# Logs, dumps, downloaded tools and local media
+*.log
+*.dmp
+*.wav
+*.mp3
+*.flac
+*.ogg
+*.opus
+*.webm
+*.m4a
+*.aac
+*.aiff
+tools/local/
+
+# Python build-script caches
+__pycache__/
+*.pyc
+
+# Runtime user preferences
+**/settings.json
