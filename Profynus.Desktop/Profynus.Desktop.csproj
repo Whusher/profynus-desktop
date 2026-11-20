@@ -5,7 +5,19 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <!-- Metadata: shown in Windows file properties; harmless on Linux/macOS -->
+    <Product>Profynus Music</Product>
+    <AssemblyTitle>Profynus Music</AssemblyTitle>
+    <Company>Profynus</Company>
+    <Version>0.1.0</Version>
   </PropertyGroup>
+
+  <!-- Windows-only: embed the .ico into the exe. Only applied when publishing for Windows. -->
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x64' Or $([MSBuild]::IsOSPlatform('Windows'))">
+    <ApplicationIcon>Assets/logo.ico</ApplicationIcon>
+  </PropertyGroup>
+
 
   <ItemGroup>
     <AvaloniaResource Include="Assets/**" />

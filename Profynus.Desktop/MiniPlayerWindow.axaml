@@ -2,6 +2,7 @@
  xmlns:vm="using:Profynus.Desktop.ViewModels" xmlns:controls="using:Profynus.Desktop.Controls"
  x:Class="Profynus.Desktop.MiniPlayerWindow" x:DataType="vm:PlayerViewModel"
  Title="Profynus · Mini player" Width="360" Height="440" CanResize="False"
+ Icon="/Assets/profynus.png"
  WindowDecorations="None" TransparencyLevelHint="Transparent" Background="Transparent"
  Topmost="True" ShowInTaskbar="True" WindowStartupLocation="CenterScreen">
  <Grid x:Name="Surface" Background="Transparent" RowDefinitions="36,*,Auto,100" Margin="12">

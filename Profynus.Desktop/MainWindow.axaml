@@ -1,4 +1,8 @@
-<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:vm="using:Profynus.Desktop.ViewModels" xmlns:models="using:Profynus.Desktop.Models" x:DataType="vm:PlayerViewModel" xmlns:controls="using:Profynus.Desktop.Controls" x:Class="Profynus.Desktop.MainWindow" Title="Profynus · Your music, amplified" Width="1440" Height="920" MinWidth="1000" MinHeight="720" Background="{DynamicResource Canvas}">
+<Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:vm="using:Profynus.Desktop.ViewModels" xmlns:models="using:Profynus.Desktop.Models" x:DataType="vm:PlayerViewModel" xmlns:controls="using:Profynus.Desktop.Controls" x:Class="Profynus.Desktop.MainWindow"
+        Title="Profynus Music"
+        Width="1440" Height="920" MinWidth="1000"
+        MinHeight="720" Background="{DynamicResource Canvas}"
+        Icon="/Assets/profynus.png">
  <Grid RowDefinitions="84,*,120" Margin="28,0">
   <Grid ColumnDefinitions="Auto,*,Auto">
    <StackPanel Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
